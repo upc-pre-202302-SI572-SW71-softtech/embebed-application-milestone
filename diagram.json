@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "author": "Uri Shaked",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-breadboard", "id": "bb1", "top": -233.4, "left": -227.6, "attrs": {} },
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 33.5, "left": -72.2, "attrs": {} },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": -118.8,
+      "left": -197.8,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": -92.05,
+      "left": -172.8,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-pir-motion-sensor",
+      "id": "pir1",
+      "top": -255.2,
+      "left": -199.38,
+      "attrs": {}
+    },
+    { "type": "wokwi-dht22", "id": "dht1", "top": -297.3, "left": -5.4, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX0", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX0", "$serialMonitor:TX", "", [] ],
+    [ "esp:D26", "bb1:10b.j", "green", [ "h-48", "v-211.3" ] ],
+    [ "esp:GND.2", "led1:C", "black", [ "h-153.6", "v-259.3" ] ],
+    [ "esp:3V3", "pir1:VCC", "red", [ "h28.5", "v-336", "h-220.8" ] ],
+    [ "pir1:GND", "led1:C", "black", [ "h-0.26", "v28.8", "h-76.8", "v57.6" ] ],
+    [ "pir1:OUT", "esp:D25", "green", [ "v0" ] ],
+    [ "led1:A", "bb1:4b.j", "", [ "$bb" ] ],
+    [ "led1:C", "bb1:3b.j", "", [ "$bb" ] ],
+    [ "r1:1", "bb1:4b.i", "", [ "$bb" ] ],
+    [ "r1:2", "bb1:10b.i", "", [ "$bb" ] ],
+    [ "pir1:VCC", "bb1:5t.c", "", [ "$bb" ] ],
+    [ "pir1:OUT", "bb1:6t.c", "", [ "$bb" ] ],
+    [ "pir1:GND", "bb1:7t.c", "", [ "$bb" ] ],
+    [ "dht1:VCC", "bb1:23t.a", "", [ "$bb" ] ],
+    [ "dht1:SDA", "bb1:24t.a", "", [ "$bb" ] ],
+    [ "dht1:NC", "bb1:25t.a", "", [ "$bb" ] ],
+    [ "dht1:GND", "bb1:26t.a", "", [ "$bb" ] ],
+    [ "dht1:VCC", "esp:3V3", "red", [ "v182.4", "h67.2", "v192" ] ],
+    [ "dht1:SDA", "esp:D33", "green", [ "v192", "h-105.5", "v105.6" ] ],
+    [ "dht1:GND", "esp:D15", "black", [ "v355.2" ] ]
+  ],
+  "dependencies": {}
+}

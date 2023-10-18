@@ -24,9 +24,9 @@
     [ "pir1:OUT", "esp:D25", "green", [ "h-0.14", "v132.8" ] ],
     [ "r1:1", "led1:A", "green", [] ],
     [ "r1:2", "esp:D26", "green", [] ],
-    [ "dht1:VCC", "esp:3V3", "red", [ "v13.9", "h9.6", "v163.2" ] ],
-    [ "dht1:SDA", "esp:D5", "green", [ "v115.2", "h-28.4" ] ],
-    [ "dht1:GND", "esp:D15", "black", [ "v48", "h-47.7" ] ]
+    [ "dht1:VCC", "esp:3V3", "red", [ "v13.9", "v163.2" ] ],
+    [ "dht1:SDA", "esp:D33", "green", [ "v10" ] ],
+    [ "dht1:GND", "esp:D15", "black", [ "v48" ] ]
   ],
   "dependencies": {}
 }

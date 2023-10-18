@@ -3,27 +3,48 @@
 #define DHTPIN 33
 #define DHTTYPE DHT22
 
-int pinLed1 = 26;
-int pinSns1 = 25;
-int pinTmp1 = 33;
+#define PINLED  26
+#define PINMOTION  25
+#define PINTEMPERATURE  33
 
+// URL to send data
+const String url  = "";
+
+
+HTTPClient http;
+
+// Initialize DHT object with DHTTYPE and DHTPIN
 DHT dhtObject(DHTPIN, DHTTYPE) ;
 
 void setup() {
+  // put your setup code here, to run once:
   Serial.begin(9600);
-  pinMode(pinLed1, OUTPUT);
-  pinMode(pinSns1, INPUT_PULLUP);
-  pinMode(pinTmp1, INPUT);
+
+  pinMode(PINLED, OUTPUT);
+  pinMode(PINMOTION, INPUT_PULLUP);
+  pinMode(PINTEMPERATURE, INPUT);
+
+  // Connect to WiFi network
+  WiFi.begin(SSID, WIFI_PASSWORD);
+  // Wait for connection
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Connected to WiFi");
+
+  // Initialize DHT sensor.
   dhtObject.begin();
 }
 
 void loop() {
-  int statusSns1 = digitalRead(pinSns1);
-  int tmpValue = analogRead(pinTmp1);
+  int statusSns1 = digitalRead(PINMOTION);
+  int tmpValue = analogRead(PINTEMPERATURE);
+
   if (statusSns1 == HIGH) {
-    digitalWrite(pinLed1, HIGH);
+    digitalWrite(PINLED, HIGH);
   } else {
-    digitalWrite(pinLed1, LOW);
+    digitalWrite(PINLED, LOW);
   }
 
   float Humidity = dhtObject.readHumidity();
@@ -38,5 +59,5 @@ void loop() {
   Serial.print(Humidity);
   Serial.print("%.");
     
-  delay(1000);
+  delay(5000);
 }

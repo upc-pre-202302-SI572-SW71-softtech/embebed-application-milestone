@@ -1,7 +1,6 @@
-#include "DHT.h"
+#include "lib.h"
 
 #define DHTPIN 33
-
 #define DHTTYPE DHT22
 
 int pinLed1 = 26;

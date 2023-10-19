@@ -38,6 +38,10 @@ void setup() {
 }
 
 void loop() {
+  // @implements
+  // 1. Create consume API 
+  // 2. Read data from sensor
+  // 3. Send data to server
   int statusSns1 = digitalRead(PINMOTION);
   int tmpValue = analogRead(PINTEMPERATURE);
 

@@ -6,9 +6,13 @@
 #define PINLED  26
 #define PINMOTION  25
 #define PINTEMPERATURE  33
+// Defining the WiFi channel speeds up the connection:
+#define WIFI_CHANNEL 6
 
 // URL to send data
 const String url  = "";
+// API key
+const String apiKey = "";
 
 
 HTTPClient http;
@@ -25,10 +29,10 @@ void setup() {
   pinMode(PINTEMPERATURE, INPUT);
 
   // Connect to WiFi network
-  WiFi.begin(SSID, WIFI_PASSWORD);
+  WiFi.begin(SSID, WIFI_PASSWORD, WIFI_CHANNEL);
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
+    delay(100);
     Serial.print(".");
   }
   Serial.println("Connected to WiFi");
@@ -38,8 +42,32 @@ void setup() {
 }
 
 void loop() {
-  // @implements
-  // 1. Create consume API 
+  Serial.println(WiFi.status());
+  if(WiFi.status() != WL_CONNECTED) {
+    Serial.println("WiFi connection lost");
+    return;
+  }
+  else {
+    Serial.println("WiFi connection is OK");
+    //http.begin(url);
+    // Send HTTP GET request
+    /*int httpCode = http.GET();
+    Serial.println(httpCode);
+    if (httpCode > 0) {
+      StaticJsonDocument<768> doc;
+      DeserializationError error = deserializeJson(doc, http.getString());
+      if (error) {
+        Serial.print(F("deserializeJson() failed: "));
+        Serial.println(error.f_str());
+        delay(2500);
+        return;
+      }
+
+      Serial.print("HTTP Response: ");
+      Serial.println(httpCode);
+    }*/
+  }
+  
   // 2. Read data from sensor
   // 3. Send data to server
   int statusSns1 = digitalRead(PINMOTION);
@@ -54,7 +82,7 @@ void loop() {
   float Humidity = dhtObject.readHumidity();
   float Temperature = dhtObject.readTemperature();
 
-
+  /*
   Serial.println("Temperature:");
   Serial.print(Temperature) ;
   Serial.print("degrees celsius, ");
@@ -62,6 +90,6 @@ void loop() {
   Serial.println("Humidity:");
   Serial.print(Humidity);
   Serial.print("%.");
-    
+   */ 
   delay(5000);
 }

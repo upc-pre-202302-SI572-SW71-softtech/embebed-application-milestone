@@ -41,6 +41,7 @@ void setup() {
   dhtObject.begin();
 }
 
+
 void loop() {
   Serial.println(WiFi.status());
   if(WiFi.status() != WL_CONNECTED) {
@@ -49,47 +50,40 @@ void loop() {
   }
   else {
     Serial.println("WiFi connection is OK");
-    //http.begin(url);
-    // Send HTTP GET request
-    /*int httpCode = http.GET();
-    Serial.println(httpCode);
-    if (httpCode > 0) {
-      StaticJsonDocument<768> doc;
-      DeserializationError error = deserializeJson(doc, http.getString());
-      if (error) {
-        Serial.print(F("deserializeJson() failed: "));
-        Serial.println(error.f_str());
-        delay(2500);
-        return;
-      }
-
-      Serial.print("HTTP Response: ");
-      Serial.println(httpCode);
-    }*/
   }
   
-  // 2. Read data from sensor
-  // 3. Send data to server
-  int statusSns1 = digitalRead(PINMOTION);
-  int tmpValue = analogRead(PINTEMPERATURE);
+  // Read data from DHT sensor
+  float humidity = dhtObject.readHumidity();
+  float temperature = dhtObject.readTemperature();
 
-  if (statusSns1 == HIGH) {
-    digitalWrite(PINLED, HIGH);
-  } else {
-    digitalWrite(PINLED, LOW);
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(humidity) || isnan(temperature)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+    return;
   }
 
-  float Humidity = dhtObject.readHumidity();
-  float Temperature = dhtObject.readTemperature();
+  // Now you can send this to your backend
+  if(WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin("http://192.168.18.15:8106/api/devices/param"); // Endpoint
+    http.addHeader("Content-Type", "application/json");
+    
+    // Prepare your JSON payload
+    String jsonPayload = "{\"humidity\":\"" + String(humidity) + "\", \"temperature\":\"" + String(temperature) + "\"}";
 
-  /*
-  Serial.println("Temperature:");
-  Serial.print(Temperature) ;
-  Serial.print("degrees celsius, ");
+    int httpResponseCode = http.POST(jsonPayload);
 
-  Serial.println("Humidity:");
-  Serial.print(Humidity);
-  Serial.print("%.");
-   */ 
-  delay(5000);
+    if (httpResponseCode > 0) {
+      String response = http.getString(); // Get the response to the request
+      Serial.println(httpResponseCode);   // Print return code
+      Serial.println(response);           // Print request answer
+    } else {
+      Serial.print("Error on sending POST: ");
+      Serial.println(httpResponseCode);
+    }
+
+    http.end(); // Free resources
+  }
+
+  delay(5000); // Wait for 5 seconds before sending again
 }

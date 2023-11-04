@@ -65,7 +65,7 @@ void loop() {
   // Now you can send this to your backend
   if(WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
-    http.begin("http://192.168.18.15:8106/api/devices/param"); // Endpoint
+    http.begin("http://localhost:8106/api/devices/param"); // Endpoint
     http.addHeader("Content-Type", "application/json");
     
     // Prepare your JSON payload

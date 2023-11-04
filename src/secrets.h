@@ -1,2 +1,2 @@
 #define SSID "Wokwi-GUEST"
-#define WIFI_PASSWORD "wokwi"
+#define WIFI_PASSWORD ""

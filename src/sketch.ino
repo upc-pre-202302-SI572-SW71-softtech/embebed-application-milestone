@@ -10,15 +10,14 @@
 #define WIFI_CHANNEL 6
 
 // URL to send data
-const String url  = "";
-// API key
-const String apiKey = "";
-
-
+const String url  = "http://localhost:8106/api/devices/param";
 HTTPClient http;
 
 // Initialize DHT object with DHTTYPE and DHTPIN
-DHT dhtObject(DHTPIN, DHTTYPE) ;
+DHT dhtObject(DHTPIN, DHTTYPE);
+
+float previousHumidity = 0.0;
+float previousTemperature = 0.0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -41,17 +40,15 @@ void setup() {
   dhtObject.begin();
 }
 
-
 void loop() {
   Serial.println(WiFi.status());
   if(WiFi.status() != WL_CONNECTED) {
     Serial.println("WiFi connection lost");
     return;
-  }
-  else {
+  } else {
     Serial.println("WiFi connection is OK");
   }
-  
+
   // Read data from DHT sensor
   float humidity = dhtObject.readHumidity();
   float temperature = dhtObject.readTemperature();
@@ -62,28 +59,36 @@ void loop() {
     return;
   }
 
-  // Now you can send this to your backend
-  if(WiFi.status() == WL_CONNECTED) {
-    HTTPClient http;
-    http.begin("http://localhost:8106/api/devices/param"); // Endpoint
-    http.addHeader("Content-Type", "application/json");
-    
-    // Prepare your JSON payload
-    String jsonPayload = "{\"humidity\":\"" + String(humidity) + "\", \"temperature\":\"" + String(temperature) + "\"}";
+  // Check if the parameters have changed
+  if (humidity != previousHumidity || temperature != previousTemperature) {
+    // Now you can send this to your backend
+    if (WiFi.status() == WL_CONNECTED) {
+      HTTPClient http;
+      http.begin(url); // Endpoint
+      http.addHeader("Content-Type", "application/json");
 
-    int httpResponseCode = http.POST(jsonPayload);
+      // Prepare your JSON payload
+      String jsonPayload = "{\"humidity\":\"" + String(humidity) + "\", \"temperature\":\"" + String(temperature) + "\"}";
 
-    if (httpResponseCode > 0) {
-      String response = http.getString(); // Get the response to the request
-      Serial.println(httpResponseCode);   // Print return code
-      Serial.println(response);           // Print request answer
-    } else {
-      Serial.print("Error on sending POST: ");
-      Serial.println(httpResponseCode);
+      int httpResponseCode = http.POST(jsonPayload);
+
+      if (httpResponseCode > 0) {
+        String response = http.getString(); // Get the response to the request
+        Serial.println(httpResponseCode);   // Print return code
+        Serial.println(response);           // Print request answer
+      } else {
+        Serial.print("Error on sending POST: ");
+        Serial.println(httpResponseCode);
+      }
+
+      http.end(); // Free resources
     }
 
-    http.end(); // Free resources
+    // Update previous readings
+    previousHumidity = humidity;
+    previousTemperature = temperature;
   }
 
   delay(5000); // Wait for 5 seconds before sending again
 }
+
